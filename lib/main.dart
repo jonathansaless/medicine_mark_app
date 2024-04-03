@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,6 +21,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MedicineList extends StatefulWidget {
+  const MedicineList({super.key});
+
   @override
   _MedicineListState createState() => _MedicineListState();
 }
@@ -87,7 +91,7 @@ class _MedicineListState extends State<MedicineList> {
                   controller: medicineController,
                   decoration: InputDecoration(hintText: 'Nome do remédio'),
                 ),
-                actions: <Widget>[
+                actions: [
                   TextButton(
                     child: Text('Cancelar'),
                     onPressed: () {
