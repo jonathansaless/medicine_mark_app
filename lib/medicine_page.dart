@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 class MedicineDetailsPage extends StatefulWidget {
   final String medicine;
@@ -12,66 +11,63 @@ class MedicineDetailsPage extends StatefulWidget {
 }
 
 class _MedicineDetailsPageState extends State<MedicineDetailsPage> {
-  DateTime _selectedDate = DateTime.now();
-  Map<DateTime, List<dynamic>> _markedDates = {};
+  DateTime _today = DateTime.now();
+  bool? takeTheMedicine = false;
+  final Map<DateTime, List<dynamic>> _markedDates = {};
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Marcar ${widget.medicine} como Tomado'),
-      ),
-      body: Center(
-        child: TableCalendar(
-          calendarFormat: CalendarFormat.month,
-          focusedDay: _selectedDate,
-          firstDay: DateTime.utc(2022, 1, 1),
-          lastDay: DateTime.utc(2025, 12, 31),
-          headerStyle: HeaderStyle(
-            formatButtonVisible: false,
+        backgroundColor: takeTheMedicine == true ? Colors.green : Colors.red,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              takeTheMedicine == true
+                  ? Text(
+                      'Você já tomou ${widget.medicine} hoje.',
+                      style: TextStyle(
+                        fontSize: 28,
+                      ),
+                      textAlign: TextAlign.center,
+                    )
+                  : Text(
+                      'Você ainda não tomou ${widget.medicine} hoje.',
+                      style: TextStyle(
+                        fontSize: 28,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+              SizedBox(
+                height: 20,
+              ),
+              takeTheMedicine == false
+                  ? ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          takeTheMedicine = true;
+                        });
+                      },
+                      child: Text('Sinalizar que tomei o remédio hoje!'),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.all(20)),
+                    )
+                  : ElevatedButton(
+                      onPressed: () {},
+                      child: Icon(Icons.done),
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(),
+                        padding: EdgeInsets.all(15),
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                      ),
+                    )
+            ],
           ),
-          calendarStyle: CalendarStyle(
-            selectedDecoration: BoxDecoration(
-              color: Colors.blue,
-              shape: BoxShape.circle,
-            ),
-            todayDecoration: BoxDecoration(
-              color: Colors.redAccent,
-              shape: BoxShape.circle,
-            ),
-          ),
-          calendarBuilders: CalendarBuilders(
-            selectedBuilder: (context, date, events) => buildDayWidget(date, Colors.blue),
-            todayBuilder: (context, date, events) => buildDayWidget(date, Colors.redAccent),
-            markerBuilder: (context, date, events) {
-              if (_markedDates[date] != null && _markedDates[date]!.contains('taken')) {
-                return buildDayWidget(date, Colors.green);
-              }
-              return null;
-            },
-          ),
-          onDaySelected: (selectedDay, focusedDay) {
-            setState(() {
-              _selectedDate = selectedDay;
-            });
-          },
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          String key = '${widget.medicine}_${_selectedDate.year}_${_selectedDate.month}_${_selectedDate.day}';
-          prefs.setBool(key, true);
-
-          setState(() {
-            _markedDates[_selectedDate] = ['taken'];
-          });
-
-          Navigator.pop(context);
-        },
-        child: Icon(Icons.check),
-      ),
-    );
+        ));
   }
 
   Widget buildDayWidget(DateTime date, Color color) {
@@ -91,4 +87,3 @@ class _MedicineDetailsPageState extends State<MedicineDetailsPage> {
     );
   }
 }
-
