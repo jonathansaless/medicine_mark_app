@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medicine_mark_app/medicine_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      debugShowCheckedModeBanner: false,
       home: MedicineList(),
     );
   }
@@ -60,6 +62,33 @@ class _MedicineListState extends State<MedicineList> {
     });
   }
 
+  void confirmRemoveMedicine(int index) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Remover Remédio'),
+          content: Text('Deseja realmente remover este remédio?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Remover'),
+              onPressed: () {
+                removeMedicine(index);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,14 +99,22 @@ class _MedicineListState extends State<MedicineList> {
         itemCount: medicines.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(medicines[index]),
-            trailing: IconButton(
-              icon: Icon(Icons.check),
-              onPressed: () {
-                removeMedicine(index);
-              },
-            ),
-          );
+  title: Text(medicines[index]),
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MedicineDetailsPage(medicine: medicines[index]),
+      ),
+    );
+  },
+  trailing: IconButton(
+    icon: Icon(Icons.close),
+    onPressed: () {
+      confirmRemoveMedicine(index);
+    },
+  ),
+);
         },
       ),
       floatingActionButton: FloatingActionButton(
