@@ -3,6 +3,7 @@ import 'package:medicine_mark_app/services/shared_local_storage.dart';
 class HomePageController {
   List<String> medicines = [];
   var localData = SharedLocalStorageService();
+  get medicineLength => medicines.length;
 
   addMedicine(String medicine) {
     medicines.add(medicine);
@@ -15,14 +16,14 @@ class HomePageController {
   }
 
   loadMedicines() async {
-    medicines = await localData.get('medicines') ?? [];
+    medicines = await localData.getMeds('medicines') ?? [];
   }
 
   medicineName(int index) {
     return medicines[index];
   }
 
-  medicineLength() {
-    return medicines.length;
-  }
+  // medicineLength() {
+  //   return _medicines.length;
+  // }
 }

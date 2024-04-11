@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:medicine_mark_app/pages/medicine/medicine_controller.dart';
 
 class MedicineDetailsPage extends StatefulWidget {
   final String medicine;
@@ -11,20 +11,30 @@ class MedicineDetailsPage extends StatefulWidget {
 }
 
 class _MedicineDetailsPageState extends State<MedicineDetailsPage> {
-  DateTime _today = DateTime.now();
-  bool? takeTheMedicine = false;
-  final Map<DateTime, List<dynamic>> _markedDates = {};
+  final _controller = MedicineController();
+
+  bool get _takeTheMedicine => _controller.takeTheMedicine;
+
+  @override
+  void initState() {
+    super.initState();
+    // ValueNotifier sem usar Builders. Isto é, a cada mudança a tela será renderizada por inteira.
+    _controller.takeTheMedicine$.addListener(() {
+      setState(() {});
+    });
+    _controller.loadMedicineStatus(widget.medicine);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: takeTheMedicine == true ? Colors.green : Colors.red,
+        backgroundColor: _takeTheMedicine == true ? Colors.green : Colors.red,
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              takeTheMedicine == true
+              _takeTheMedicine == true
                   ? Text(
                       'Você já tomou ${widget.medicine} hoje.',
                       style: TextStyle(
@@ -42,28 +52,21 @@ class _MedicineDetailsPageState extends State<MedicineDetailsPage> {
               SizedBox(
                 height: 20,
               ),
-              takeTheMedicine == false
-                  ? ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          takeTheMedicine = true;
-                        });
-                      },
-                      child: Text('Sinalizar que tomei o remédio hoje!'),
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.all(20)),
+              _takeTheMedicine == true
+                  ? Icon(
+                      Icons.done,
+                      color: Colors.white,
+                      size: 100.0,
                     )
                   : ElevatedButton(
-                      onPressed: () {},
-                      child: Icon(Icons.done),
+                      onPressed: () {
+                        _controller.medicineTaken(widget.medicine);
+                      },
+                      child: Text('Tomar!'),
                       style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(),
-                        padding: EdgeInsets.all(15),
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                      ),
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          padding: EdgeInsets.all(20)),
                     )
             ],
           ),

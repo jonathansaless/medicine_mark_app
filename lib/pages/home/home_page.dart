@@ -11,6 +11,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _controller = HomePageController();
+  List<String> get _medicines => _controller.medicines;
 
   TextEditingController medicineController = TextEditingController();
 
@@ -58,7 +59,7 @@ class _HomePageState extends State<HomePage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return ListView.builder(
-              itemCount: _controller.medicineLength(),
+              itemCount: _controller.medicineLength,
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text(_controller.medicineName(index)),
