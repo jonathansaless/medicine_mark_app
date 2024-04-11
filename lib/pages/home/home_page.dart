@@ -11,13 +11,18 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _controller = HomePageController();
+
   List<String> get _medicines => _controller.medicines;
 
   TextEditingController medicineController = TextEditingController();
 
   @override
-  initState() {
+  void initState() {
     super.initState();
+    _controller.medicines$.addListener(() {
+      setState(() {});
+    });
+    _controller.loadMedicines();
   }
 
   void confirmRemoveMedicine(int index) async {
@@ -25,7 +30,7 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Remover ${_controller.medicineName(index)}'),
+          title: Text('Remover ${_controller.medicine(index)}'),
           content: Text('Deseja realmente remover este remédio?'),
           actions: <Widget>[
             TextButton(
@@ -39,7 +44,6 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 _controller.removeMedicine(index);
                 Navigator.of(context).pop();
-                setState(() {});
               },
             ),
           ],
@@ -54,36 +58,27 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text('Lembrete de Remédios'),
       ),
-      body: FutureBuilder(
-        future: _controller.loadMedicines(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return ListView.builder(
-              itemCount: _controller.medicineLength,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(_controller.medicineName(index)),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MedicineDetailsPage(
-                            medicine: _controller.medicineName(index)),
-                      ),
-                    );
-                  },
-                  trailing: IconButton(
-                    icon: Icon(Icons.close),
-                    onPressed: () {
-                      confirmRemoveMedicine(index);
-                    },
-                  ),
-                );
+      body: ListView.builder(
+        itemCount: _controller.medicineLength,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(_controller.medicine(index)),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MedicineDetailsPage(
+                      medicine: _controller.medicine(index)),
+                ),
+              );
+            },
+            trailing: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                confirmRemoveMedicine(index);
               },
-            );
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
+            ),
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -110,7 +105,6 @@ class _HomePageState extends State<HomePage> {
                       _controller.addMedicine(medicineController.text);
                       medicineController.clear();
                       Navigator.of(context).pop();
-                      setState(() {});
                     },
                   ),
                 ],

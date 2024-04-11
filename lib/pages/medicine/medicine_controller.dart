@@ -17,6 +17,5 @@ class MedicineController {
 
   loadMedicineStatus(String key) async {
     takeTheMedicine$.value = await localData.getMed(key) ?? false;
-    print(takeTheMedicine$.value);
   }
 }

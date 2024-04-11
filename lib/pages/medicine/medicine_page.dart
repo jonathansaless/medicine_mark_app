@@ -29,8 +29,8 @@ class _MedicineDetailsPageState extends State<MedicineDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: _takeTheMedicine == true ? Colors.green : Colors.red,
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
+        body: Container(
+          alignment: Alignment.center,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -71,22 +71,5 @@ class _MedicineDetailsPageState extends State<MedicineDetailsPage> {
             ],
           ),
         ));
-  }
-
-  Widget buildDayWidget(DateTime date, Color color) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color,
-      ),
-      child: Center(
-        child: Text(
-          date.day.toString(),
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-    );
   }
 }
