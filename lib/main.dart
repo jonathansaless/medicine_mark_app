@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:medicine_mark_app/medicine_page.dart';
+import 'package:medicine_mark_app/pages/medicine/medicine_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
