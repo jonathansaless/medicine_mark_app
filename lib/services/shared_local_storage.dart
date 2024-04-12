@@ -27,4 +27,15 @@ class SharedLocalStorageService extends ChangeNotifier {
       prefs.setBool(key, value);
     }
   }
+
+  Future<DateTime?> getLastTakenDate(String key) async {
+    var prefs = await SharedPreferences.getInstance();
+    String? dateString = prefs.getString('$key-last-taken-date');
+    return dateString != null ? DateTime.parse(dateString) : null;
+  }
+
+  Future setLastTakenDate(String key, DateTime date) async {
+    var prefs = await SharedPreferences.getInstance();
+    prefs.setString('$key-last-taken-date', date.toIso8601String());
+  }
 }

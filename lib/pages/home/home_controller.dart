@@ -34,4 +34,31 @@ class HomePageController {
   medicine(int index) {
     return medicines$.value[index];
   }
+
+  checkMedicineStatus() async {
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+
+    List<String> updatedMedicines = List<String>.from(medicines$.value);
+
+    for (int i = 0; i < updatedMedicines.length; i++) {
+      String key = updatedMedicines[i];
+      bool isTaken = await localData.getMed(key) ?? false;
+
+      if (isTaken) {
+        DateTime? lastTakenDate = localData.getLastTakenDate(key) as DateTime?;
+
+
+        if (lastTakenDate!.isBefore(today)) {
+          // Remédio tomado antes da meia-noite, atualiza o status para falso
+          localData.set(key, false);
+        }
+      } else {
+        // Remédio não tomado, salva a data do último dia antes da meia-noite
+        localData.setLastTakenDate(key, today.subtract(Duration(days: 1)));
+      }
+    }
+
+    loadMedicines(); // Recarrega a lista de remédios após as atualizações
+  }
 }

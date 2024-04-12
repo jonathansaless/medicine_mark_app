@@ -23,6 +23,8 @@ class _HomePageState extends State<HomePage> {
       setState(() {});
     });
     _controller.loadMedicines();
+    _controller
+        .checkMedicineStatus(); // Verifica o status dos remédios diariamente
   }
 
   void confirmRemoveMedicine(int index) async {
